@@ -8,6 +8,7 @@ Dependencies:
  4. numpy 1.14.3
  3. Jupyter Notebook
 
+
 Files:
  1. MNIST.ipynb is a simple CNN network for classification in mnist dataset.   
  2. FCN.ipynb is mnist number classification using FCN network.   
