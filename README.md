@@ -2,11 +2,11 @@
 This is a toy sample for mnist classification using CNN and FCN. 
 
 Dependencies:
- 1. Pytorch 0.4.0
- 2. Python 3.6
+ 1. Python 3.6
+ 2. Pytorch 0.4.0 
  3. matplotlib 2.2.2
  4. numpy 1.14.3
- 3. Jupyter Notebook
+ 5. Jupyter Notebook
 
 
 Files:
