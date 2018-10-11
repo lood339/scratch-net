@@ -1,5 +1,6 @@
-# player-detection
-This is a toy sample for mnist classification using CNN and FCN. 
+# object-detection
+Toy examples for object classification/detection.
+
 
 Dependencies:
  1. Python 3.6
