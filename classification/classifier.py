@@ -25,13 +25,6 @@ testloader = torch.utils.data.DataLoader(testset, batch_size=4,
 classes = ('plane', 'car', 'bird', 'cat',
            'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
-"""
-batch_size = 16
-trainset = torchvision.datasets.MNIST('../data', train=True, download=True, transform=transform)
-trainloader = torch.utils.data.DataLoader(trainset, batch_size=16, shuffle=True)
-testset = torchvision.datasets.MNIST('../data', train=False, download=True, transform=transform)
-testloader = torch.utils.data.DataLoader(testset, batch_size=16, shuffle=False)
-"""
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -63,15 +56,57 @@ if torch.cuda.is_available():
 print(device)
 
 net = resnet18()
+net.to(device)
 
 import torch.optim as optim
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(net.parameters(), lr = 0.001, momentum = 0.9)
+optimizer = optim.SGD(net.parameters(), lr = 0.1, momentum = 0.9)
 
-for epoch in range(2):
+
+def training_accuracy(net, device):
+    class_correct = list(0.0 for i in range(10))
+    class_total = list(0.0 for i in range(10))
+    with torch.no_grad():
+        for data in trainloader:
+            images, labels = data
+            images, labels = images.to(device), labels.to(device)
+            outputs = net(images)
+            _, predicted = torch.max(outputs.data, 1)
+            c = (predicted == labels).squeeze()
+            for i in range(4):
+                label = labels[i]
+                class_correct[label] += c[i].item()
+                class_total[label] += 1
+    #for i in range(10):
+    #    print('Accuracy of %5s: %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
+    print('Training Error: %.02f' % (1.0 - sum(class_correct) / sum(class_total)))
+
+def testing_accuracy(net, device):
+    class_correct = list(0.0 for i in range(10))
+    class_total = list(0.0 for i in range(10))
+    with torch.no_grad():
+        for data in testloader:
+            images, labels = data
+            images, labels = images.to(device), labels.to(device)
+            outputs = net(images)
+            _, predicted = torch.max(outputs.data, 1)
+            c = (predicted == labels).squeeze()
+            for i in range(4):
+                label = labels[i]
+                class_correct[label] += c[i].item()
+                class_total[label] += 1
+    #for i in range(10):
+    #    print('Accuracy of %5s: %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
+    print('Testing Error: %.02f' % (1.0 - sum(class_correct)/sum(class_total)))
+
+
+
+
+for epoch in range(100):
     running_loss = 0.0
     for i, data in enumerate(trainloader, 0):
         inputs, labels = data
+        inputs, labels = inputs.to(device), labels.to(device)
 
         optimizer.zero_grad()
 
@@ -81,25 +116,28 @@ for epoch in range(2):
         optimizer.step()
 
         running_loss += loss.item()
+        """
         if i%2000 == 1999:
             print('[%d, %5d] loss: %.3f' % (epoch+1, i+1, running_loss/2000))
             running_loss = 0.0
+        if i%12000 == 11999:
+            training_accuracy(net, device)
+            testing_accuracy(net, device)
+        """
+    print('[Epoch: %d] loss: %.3f' % (epoch + 1, running_loss / 50000))
+    running_loss = 0.0
+    training_accuracy(net, device)
+    testing_accuracy(net, device)
+
+    if epoch == 25:
+        optimizer = optim.SGD(net.parameters(), lr=0.01, momentum=0.9)
+    elif epoch == 75:
+        optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
+
+
 
 print('Finished Training')
 
 
-class_correct = list(0.0 for i in range(10))
-class_total = list(0.0 for i in range(10))
-with torch.no_grad():
-    for data in testloader:
-        images, labels = data
-        outputs = net(images)
-        _, predicted = torch.max(outputs.data, 1)
-        c = (predicted == labels).squeeze()
-        for i in range(4):
-            label = labels[i]
-            class_correct[label] += c[i].item()
-            class_total[label] += 1
+testing_accuracy(net, device)
 
-for i in range(10):
-    print('Accuracy of %5s: %2d %%' %(classes[i], 100 * class_correct[i]/class_total[i]))
