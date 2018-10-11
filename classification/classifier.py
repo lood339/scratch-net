@@ -4,9 +4,14 @@ import torchvision.transforms as transforms
 from resnet import *
 
 
+transform=transforms.Compose([
+                           transforms.ToTensor(),
+                           transforms.Normalize((0.1307,), (0.3081,))
+                       ])
+
+
 transform = transforms.Compose([transforms.ToTensor(),
                                 transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
-
 
 trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
                                         download=True, transform=transform)
@@ -19,6 +24,14 @@ testloader = torch.utils.data.DataLoader(testset, batch_size=4,
 
 classes = ('plane', 'car', 'bird', 'cat',
            'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
+
+"""
+batch_size = 16
+trainset = torchvision.datasets.MNIST('../data', train=True, download=True, transform=transform)
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=16, shuffle=True)
+testset = torchvision.datasets.MNIST('../data', train=False, download=True, transform=transform)
+testloader = torch.utils.data.DataLoader(testset, batch_size=16, shuffle=False)
+"""
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -43,6 +56,11 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
+device = 'cpu'
+if torch.cuda.is_available():
+    device = torch.device('cuda:0')
+
+print(device)
 
 net = resnet18()
 
