@@ -95,11 +95,11 @@ class ResNet(nn.Module):
         return x
 
 def resnet20(pretrained=False, **kwargs):
-    model = ResNet(BasicBlock, [3, 3, 3, 3], **kwargs)
+    model = ResNet(BasicBlock, [3, 3, 3], **kwargs)
     return model
 
 def ut_resnet20():
-    resnet20 = ResNet(BasicBlock, [3, 3, 3, 3], 10)
+    resnet20 = ResNet(BasicBlock, [3, 3, 3], 10)
 
     input = torch.randn(2, 3, 32, 32)
     output = resnet20.forward(input)
