@@ -13,7 +13,7 @@ transform=transforms.Compose([
 transform = transforms.Compose([transforms.ToTensor(),
                                 transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
-batch_size = 16
+batch_size = 32
 
 trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
                                         download=True, transform=transform)
@@ -75,7 +75,8 @@ def training_accuracy(net, device, batch_size):
             outputs = net(images)
             _, predicted = torch.max(outputs.data, 1)
             c = (predicted == labels).squeeze()
-            for i in range(batch_size):
+            n = min(batch_size, len(labels))
+            for i in range(n):
                 label = labels[i]
                 class_correct[label] += c[i].item()
                 class_total[label] += 1
@@ -93,7 +94,8 @@ def testing_accuracy(net, device, batch_size):
             outputs = net(images)
             _, predicted = torch.max(outputs.data, 1)
             c = (predicted == labels).squeeze()
-            for i in range(batch_size):
+            n = min(batch_size, len(labels))
+            for i in range(n):
                 label = labels[i]
                 class_correct[label] += c[i].item()
                 class_total[label] += 1
@@ -133,7 +135,7 @@ for epoch in range(100):
 
     if epoch == 25:
         optimizer = optim.SGD(net.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0001)
-    elif epoch == 75:
+    elif epoch == 35:
         optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9, weight_decay=0.0001)
 
 
