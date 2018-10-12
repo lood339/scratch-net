@@ -128,8 +128,8 @@ for epoch in range(100):
         """
     print('[Epoch: %d] loss: %.3f' % (epoch + 1, running_loss / 50000))
     running_loss = 0.0
-    training_accuracy(net, device)
-    testing_accuracy(net, device)
+    training_accuracy(net, device, batch_size)
+    testing_accuracy(net, device, batch_size)
 
     if epoch == 25:
         optimizer = optim.SGD(net.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0001)
@@ -141,5 +141,5 @@ for epoch in range(100):
 print('Finished Training')
 
 
-testing_accuracy(net, device)
+testing_accuracy(net, device, batch_size)
 
