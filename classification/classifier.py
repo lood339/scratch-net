@@ -86,7 +86,7 @@ def training_accuracy(net, device, batch_size):
                 class_total[label] += 1
     #for i in range(10):
     #    print('Accuracy of %5s: %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
-    print('Training Error: %.02f' % 100 * (1.0 - sum(class_correct) / sum(class_total)))
+    print('Training Error: %.03f' %  (1.0 - sum(class_correct) / sum(class_total)))
 
 def testing_accuracy(net, device, batch_size):
     class_correct = list(0.0 for i in range(10))
@@ -105,7 +105,7 @@ def testing_accuracy(net, device, batch_size):
                 class_total[label] += 1
     #for i in range(10):
     #    print('Accuracy of %5s: %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
-    print('Testing Error: %.02f' % 100 * (1.0 - sum(class_correct)/sum(class_total)))
+    print('Testing Error: %.03f' %  (1.0 - sum(class_correct)/sum(class_total)))
 
 
 
