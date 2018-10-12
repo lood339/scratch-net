@@ -17,7 +17,7 @@ test_transform=transforms.Compose([
     ])
 
 
-batch_size = 64
+batch_size = 128
 
 trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
                                         download=True, transform=train_transform)
@@ -110,7 +110,7 @@ def testing_accuracy(net, device, batch_size):
 
 
 
-for epoch in range(50):
+for epoch in range(200):
     running_loss = 0.0
     for i, data in enumerate(trainloader, 0):
         inputs, labels = data
@@ -137,9 +137,9 @@ for epoch in range(50):
     training_accuracy(net, device, batch_size)
     testing_accuracy(net, device, batch_size)
 
-    if epoch == 25:
+    if epoch == 50:
         optimizer = optim.SGD(net.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0001)
-    elif epoch == 35:
+    elif epoch == 100:
         optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9, weight_decay=0.0001)
 
 
