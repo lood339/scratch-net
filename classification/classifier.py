@@ -61,7 +61,7 @@ if torch.cuda.is_available():
 
 print(device)
 
-net = resnet18()
+net = resnet20()
 net.to(device)
 
 import torch.optim as optim

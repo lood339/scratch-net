@@ -1,7 +1,7 @@
 import torch.nn as nn
 import torch
 
-__all__ = ['ResNet', 'resnet18']
+__all__ = ['ResNet', 'resnet20']
 
 def conv3x3(in_planes, out_planes, stride=1):
     return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride, padding=1, bias=False)
@@ -52,6 +52,13 @@ class ResNet(nn.Module):
         self.avgpool = nn.AvgPool2d(8, stride=1)
         self.fc = nn.Linear(64 * block.expansion, num_classes)
 
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+            elif isinstance(m, nn.BatchNorm2d):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
+
 
     def _make_layer(self, block, planes, blocks, stride=1):
         downsample = None
@@ -87,17 +94,17 @@ class ResNet(nn.Module):
         x = self.fc(x)
         return x
 
-def resnet18(pretrained=False, **kwargs):
-    model = ResNet(BasicBlock, [2, 2, 2, 2], **kwargs)
+def resnet20(pretrained=False, **kwargs):
+    model = ResNet(BasicBlock, [3, 3, 3, 3], **kwargs)
     return model
 
-def ut_resnet18():
-    resnet18 = ResNet(BasicBlock, [2, 2, 2, 2], 10)
+def ut_resnet20():
+    resnet20 = ResNet(BasicBlock, [3, 3, 3, 3], 10)
 
     input = torch.randn(2, 3, 32, 32)
-    output = resnet18.forward(input)
-    #print(output.shape)
+    output = resnet20.forward(input)
+    print(output.shape)
 
 if __name__ == '__main__':
-    ut_resnet18()
+    ut_resnet20()
 
