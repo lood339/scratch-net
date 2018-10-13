@@ -98,6 +98,10 @@ def resnet20(pretrained=False, **kwargs):
     model = ResNet(BasicBlock, [3, 3, 3], **kwargs)
     return model
 
+def resnet32(pretrained=False, **kwargs):
+    model = ResNet(BasicBlock, [5, 5, 5], **kwargs)
+    return model
+
 def ut_resnet20():
     resnet20 = ResNet(BasicBlock, [3, 3, 3], 10)
 
@@ -105,6 +109,15 @@ def ut_resnet20():
     output = resnet20.forward(input)
     print(output.shape)
 
+def ut_resnet32():
+    resnet32 = ResNet(BasicBlock, [5, 5, 5], 10)
+
+    input = torch.randn(2, 3, 32, 32)
+    output = resnet32.forward(input)
+    print(output.shape)
+
 if __name__ == '__main__':
-    ut_resnet20()
+    #ut_resnet20()
+
+    ut_resnet32()
 
