@@ -137,9 +137,9 @@ for epoch in range(200):
     training_accuracy(net, device, batch_size)
     testing_accuracy(net, device, batch_size)
 
-    if epoch == 50:
+    if epoch == 80:
         optimizer = optim.SGD(net.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0001)
-    elif epoch == 100:
+    elif epoch == 122:
         optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9, weight_decay=0.0001)
 
 
