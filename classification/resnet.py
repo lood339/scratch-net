@@ -105,9 +105,16 @@ def resnet32(pretrained=False, **kwargs):
 def ut_resnet20():
     resnet20 = ResNet(BasicBlock, [3, 3, 3], 10)
 
-    input = torch.randn(2, 3, 32, 32)
-    output = resnet20.forward(input)
-    print(output.shape)
+    #input = torch.randn(1, 3, 32, 32)
+    #output = resnet20.forward(input)
+    #print(output.shape)
+
+    # Estimate Size
+    from pytorch_modelsize import SizeEstimator
+
+    se = SizeEstimator(resnet20, input_size=(1, 3, 32, 32))
+    print(se.estimate_size())
+
 
 def ut_resnet32():
     resnet32 = ResNet(BasicBlock, [5, 5, 5], 10)
@@ -125,9 +132,9 @@ def ut_save_model():
     model.load_state_dict(torch.load('init.pth.tar'))
 
 if __name__ == '__main__':
-    #ut_resnet20()
+    ut_resnet20()
 
     #ut_resnet32()
 
-    ut_save_model()
+    #ut_save_model()
 
