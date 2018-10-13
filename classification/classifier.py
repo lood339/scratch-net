@@ -1,7 +1,9 @@
 import torch
 import torchvision
 import torchvision.transforms as transforms
+import torch.backends.cudnn as cudnn
 from resnet import *
+
 
 
 train_transform=transforms.Compose([
@@ -25,34 +27,14 @@ trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size,
                                           shuffle=True, num_workers=2)
 testset = torchvision.datasets.CIFAR10(root='./data', train=False,
                                        download=True, transform=test_transform)
-testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size,
+testloader = torch.utils.data.DataLoader(testset, batch_size=100,
                                          shuffle=False, num_workers=2)
 
 classes = ('plane', 'car', 'bird', 'cat',
            'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
 
-import matplotlib.pyplot as plt
-import numpy as np
-
-#plt.interactive(False)
-
-def imshow(img):
-    img = img / 2 + 0.5
-    npimg = img.numpy()
-    plt.imshow(np.transpose(npimg, (1, 2, 0)))
-
-""""
-dataiter = iter(trainloader)
-images, labels = dataiter.next()
-print(images[0].size())
-imshow(torchvision.utils.make_grid(images))
-print(' '.join('%5s' % classes[labels[j]] for j in range(4)))
-plt.show()
-"""
-
 import torch.nn as nn
-import torch.nn.functional as F
 
 
 device = 'cpu'
@@ -61,12 +43,13 @@ if torch.cuda.is_available():
 
 print(device)
 
-net = resnet32()
+net = resnet20()
 net.to(device)
 
 import torch.optim as optim
-criterion = nn.CrossEntropyLoss()
+criterion = nn.CrossEntropyLoss().cuda(device)
 optimizer = optim.SGD(net.parameters(), lr = 0.1, momentum = 0.9, weight_decay=0.0001)
+cudnn.benchmark = True
 
 
 def training_accuracy(net, device, batch_size):
@@ -117,7 +100,6 @@ for epoch in range(200):
         inputs, labels = inputs.to(device), labels.to(device)
 
         optimizer.zero_grad()
-
         outputs = net(inputs)
         loss = criterion(outputs, labels)
         loss.backward()
@@ -125,14 +107,7 @@ for epoch in range(200):
 
         running_loss += loss.item()
         iteration += 1
-        """
-        if i%2000 == 1999:
-            print('[%d, %5d] loss: %.3f' % (epoch+1, i+1, running_loss/2000))
-            running_loss = 0.0
-        if i%12000 == 11999:
-            training_accuracy(net, device)
-            testing_accuracy(net, device)
-        """
+
     print('[Epoch: %d] loss: %.5f' % (epoch + 1, running_loss / 50000))
     running_loss = 0.0
     training_accuracy(net, device, batch_size)
@@ -144,10 +119,13 @@ for epoch in range(200):
         testing_accuracy(net, device, batch_size)
 
     if epoch == 80:
-        optimizer = optim.SGD(net.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0001)
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = 0.01
+        print(optimizer)
     elif epoch == 122:
-        optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9, weight_decay=0.0001)
-
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = 0.001
+        print(optimizer)
 
 
 print('Finished Training')
