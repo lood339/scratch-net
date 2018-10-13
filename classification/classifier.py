@@ -120,13 +120,17 @@ for epoch in range(200):
         training_accuracy(net, device, batch_size)
         testing_accuracy(net, device, 100)
 
-    if epoch == 80:
+    if epoch == 40:
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.01
         print(optimizer)
-    elif epoch == 122:
+    elif epoch == 80:
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.001
+    elif epoch == 120:
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = 0.0002
+
         print(optimizer)
 
 
