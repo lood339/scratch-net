@@ -109,7 +109,7 @@ def testing_accuracy(net, device, batch_size):
 
 
 
-
+iteration = 0
 for epoch in range(200):
     running_loss = 0.0
     for i, data in enumerate(trainloader, 0):
@@ -124,6 +124,7 @@ for epoch in range(200):
         optimizer.step()
 
         running_loss += loss.item()
+        iteration += 1
         """
         if i%2000 == 1999:
             print('[%d, %5d] loss: %.3f' % (epoch+1, i+1, running_loss/2000))
@@ -136,6 +137,11 @@ for epoch in range(200):
     running_loss = 0.0
     training_accuracy(net, device, batch_size)
     testing_accuracy(net, device, batch_size)
+
+    if iteration%5000 == 4999:
+        print('Iteration %d' % iteration)
+        training_accuracy(net, device, batch_size)
+        testing_accuracy(net, device, batch_size)
 
     if epoch == 80:
         optimizer = optim.SGD(net.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0001)
