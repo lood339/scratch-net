@@ -116,8 +116,18 @@ def ut_resnet32():
     output = resnet32.forward(input)
     print(output.shape)
 
+def ut_save_model():
+    #resnet20 = ResNet(BasicBlock, [3, 3, 3], 10)
+
+    #torch.save(resnet20.state_dict(), 'init.pth.tar')
+
+    model = ResNet(BasicBlock, [3, 3, 3], 10)
+    model.load_state_dict(torch.load('init.pth.tar'))
+
 if __name__ == '__main__':
     #ut_resnet20()
 
-    ut_resnet32()
+    #ut_resnet32()
+
+    ut_save_model()
 

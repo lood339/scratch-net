@@ -133,7 +133,7 @@ for epoch in range(200):
             training_accuracy(net, device)
             testing_accuracy(net, device)
         """
-    print('[Epoch: %d] loss: %.3f' % (epoch + 1, running_loss / 50000))
+    print('[Epoch: %d] loss: %.5f' % (epoch + 1, running_loss / 50000))
     running_loss = 0.0
     training_accuracy(net, device, batch_size)
     testing_accuracy(net, device, batch_size)
