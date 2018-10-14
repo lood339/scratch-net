@@ -19,7 +19,7 @@ test_transform=transforms.Compose([
     ])
 
 
-batch_size = 128
+batch_size = 256
 
 trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
                                         download=True, transform=train_transform)
@@ -91,7 +91,21 @@ def testing_accuracy(net, device, batch_size):
     print('Testing Error: %.03f' %  (1.0 - sum(class_correct)/sum(class_total)))
 
 
-for epoch in range(300):
+def adjust_learning_rate(optimizer, epoch):
+    """For resnet, the lr starts from 0.1, and is divided by 10 at 80 and 120 epochs"""
+    if epoch < 80:
+        lr = 0.1
+    elif epoch < 120:
+        lr = 0.1 * 0.1
+    else:
+        lr = 0.1 * 0.01
+
+    for param_group in optimizer.param_groups:
+        param_group['lr'] = lr
+
+
+
+for epoch in range(160):
     running_loss = 0.0
     for i, data in enumerate(trainloader, 0):
         inputs, labels = data
@@ -110,18 +124,8 @@ for epoch in range(300):
         training_accuracy(net, device, batch_size)
         testing_accuracy(net, device, 100)
 
-    if epoch == 80:
-        for param_group in optimizer.param_groups:
-            param_group['lr'] = 0.05
-        print(optimizer)
-    elif epoch == 120:
-        for param_group in optimizer.param_groups:
-            param_group['lr'] = 0.005
-        print(optimizer)
-    elif epoch == 200:
-        for param_group in optimizer.param_groups:
-            param_group['lr'] = 0.001
-        print(optimizer)
+    adjust_learning_rate(optimizer, epoch)
+
 
 
 print('Finished Training')
