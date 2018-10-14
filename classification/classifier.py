@@ -10,12 +10,12 @@ train_transform=transforms.Compose([
     transforms.RandomCrop(32, padding=4),
     transforms.RandomHorizontalFlip(),
     transforms.ToTensor(),
-    transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
+    transforms.Normalize(mean=[0.491, 0.482, 0.447], std=[0.247, 0.243, 0.262])
     ])
 
 test_transform=transforms.Compose([
     transforms.ToTensor(),
-    transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
+    transforms.Normalize(mean=[0.491, 0.482, 0.447], std=[0.247, 0.243, 0.262])
     ])
 
 
@@ -89,13 +89,12 @@ def testing_accuracy(net, device, batch_size):
     #for i in range(10):
     #    print('Accuracy of %5s: %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
     print('Testing Error: %.03f' %  (1.0 - sum(class_correct)/sum(class_total)))
-    print(sum(class_total))
 
 
 
 
-iteration = 0
-for epoch in range(200):
+
+for epoch in range(300):
     running_loss = 0.0
     for i, data in enumerate(trainloader, 0):
         inputs, labels = data
@@ -106,31 +105,23 @@ for epoch in range(200):
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
-
         running_loss += loss.item()
-        iteration += 1
 
-    print('[Epoch: %d] loss: %.5f' % (epoch + 1, running_loss / 50000))
-    running_loss = 0.0
-    training_accuracy(net, device, batch_size)
-    testing_accuracy(net, device, 100)
-
-    if iteration%5000 == 4999:
-        print('Iteration %d' % iteration)
+    if epoch%10 == 9:
+        print('[Epoch: %d] loss: %.5f' % (epoch + 1, running_loss / 50000))
         training_accuracy(net, device, batch_size)
         testing_accuracy(net, device, 100)
 
-    if epoch == 40:
+    if epoch == 80:
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.01
         print(optimizer)
-    elif epoch == 80:
-        for param_group in optimizer.param_groups:
-            param_group['lr'] = 0.001
     elif epoch == 120:
         for param_group in optimizer.param_groups:
+            param_group['lr'] = 0.001
+    elif epoch == 200:
+        for param_group in optimizer.param_groups:
             param_group['lr'] = 0.0002
-
         print(optimizer)
 
 
