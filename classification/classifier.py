@@ -39,17 +39,17 @@ import torch.nn as nn
 
 
 device = 'cpu'
+
+net = resnet20()
 if torch.cuda.is_available():
     device = torch.device('cuda:0')
+    net = nn.DataParallel(net).cuda()
 
 print(device)
 
-net = resnet32()
-net.to(device)
-
 import torch.optim as optim
 criterion = nn.CrossEntropyLoss().cuda(device)
-optimizer = optim.SGD(net.parameters(), lr = 0.1, momentum = 0.9, weight_decay=0.0001)
+optimizer = optim.SGD(net.parameters(), lr = 0.1, momentum = 0.9, weight_decay=0.0005)
 cudnn.benchmark = True
 
 
@@ -124,10 +124,6 @@ for epoch in range(160):
         print('[Epoch: %d] loss: %.5f' % (epoch + 1, running_loss / 50000))
         training_accuracy(net, device, batch_size)
         testing_accuracy(net, device, 100)
-
-    if epoch%50 == 49:
-        trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size,
-                                                  shuffle=True, num_workers=1)
 
     adjust_learning_rate(optimizer, epoch)
 
