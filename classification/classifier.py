@@ -91,18 +91,16 @@ def testing_accuracy(net, device, batch_size):
     print('Testing Error: %.03f' %  (1.0 - sum(class_correct)/sum(class_total)))
 
 
-
-
-
 for epoch in range(300):
     running_loss = 0.0
     for i, data in enumerate(trainloader, 0):
         inputs, labels = data
         inputs, labels = inputs.to(device), labels.to(device)
 
-        optimizer.zero_grad()
         outputs = net(inputs)
         loss = criterion(outputs, labels)
+
+        optimizer.zero_grad()
         loss.backward()
         optimizer.step()
         running_loss += loss.item()
@@ -114,14 +112,15 @@ for epoch in range(300):
 
     if epoch == 80:
         for param_group in optimizer.param_groups:
-            param_group['lr'] = 0.01
+            param_group['lr'] = 0.05
         print(optimizer)
     elif epoch == 120:
         for param_group in optimizer.param_groups:
-            param_group['lr'] = 0.001
+            param_group['lr'] = 0.005
+        print(optimizer)
     elif epoch == 200:
         for param_group in optimizer.param_groups:
-            param_group['lr'] = 0.0002
+            param_group['lr'] = 0.001
         print(optimizer)
 
 
