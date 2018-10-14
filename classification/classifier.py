@@ -19,7 +19,7 @@ test_transform=transforms.Compose([
     ])
 
 
-batch_size = 512
+batch_size = 128
 
 trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
                                         download=True, transform=train_transform)
