@@ -125,9 +125,11 @@ for epoch in range(160):
         training_accuracy(net, device, batch_size)
         testing_accuracy(net, device, 100)
 
+    if epoch%10 == 9:
+        trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size,
+                                                  shuffle=True, num_workers=1)
+
     adjust_learning_rate(optimizer, epoch)
-
-
 
 print('Finished Training')
 
