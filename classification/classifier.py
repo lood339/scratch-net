@@ -86,8 +86,8 @@ def testing_accuracy(net, device, batch_size):
                 label = labels[i]
                 class_correct[label] += c[i].item()
                 class_total[label] += 1
-    #for i in range(10):
-    #    print('Accuracy of %5s: %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
+    for i in range(10):
+        print('Accuracy of %5s: %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
     print('Testing Error: %.03f' %  (1.0 - sum(class_correct)/sum(class_total)))
 
 
@@ -105,7 +105,7 @@ for epoch in range(300):
         optimizer.step()
         running_loss += loss.item()
 
-    if epoch%10 == 9:
+    if epoch == 0 or epoch%10 == 9:
         print('[Epoch: %d] loss: %.5f' % (epoch + 1, running_loss / 50000))
         training_accuracy(net, device, batch_size)
         testing_accuracy(net, device, 100)
