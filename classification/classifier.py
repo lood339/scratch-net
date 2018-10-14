@@ -5,17 +5,18 @@ import torch.backends.cudnn as cudnn
 from resnet import *
 
 
+normalize = transforms.Normalize(mean=[0.491, 0.482, 0.447], std=[0.247, 0.243, 0.262])
 
 train_transform=transforms.Compose([
     transforms.RandomCrop(32, padding=4),
     transforms.RandomHorizontalFlip(),
     transforms.ToTensor(),
-    transforms.Normalize(mean=[0.491, 0.482, 0.447], std=[0.247, 0.243, 0.262])
+    normalize,
     ])
 
 test_transform=transforms.Compose([
     transforms.ToTensor(),
-    transforms.Normalize(mean=[0.491, 0.482, 0.447], std=[0.247, 0.243, 0.262])
+    normalize,
     ])
 
 
@@ -67,9 +68,9 @@ def training_accuracy(net, device, batch_size):
                 label = labels[i]
                 class_correct[label] += c[i].item()
                 class_total[label] += 1
-    #for i in range(10):
-    #    print('Accuracy of %5s: %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
-    print('Training Error: %.03f' %  (1.0 - sum(class_correct) / sum(class_total)))
+    for i in range(10):
+        print('Accuracy of %5s: %.1f %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
+    print('Training Accuracy: %.1f' %  (100 * sum(class_correct)/sum(class_total) ))
 
 def testing_accuracy(net, device, batch_size):
     class_correct = list(0.0 for i in range(10))
