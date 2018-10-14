@@ -19,7 +19,7 @@ test_transform=transforms.Compose([
     ])
 
 
-batch_size = 256
+batch_size = 512
 
 trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
                                         download=True, transform=train_transform)
@@ -87,8 +87,8 @@ def testing_accuracy(net, device, batch_size):
                 class_correct[label] += c[i].item()
                 class_total[label] += 1
     for i in range(10):
-        print('Accuracy of %5s: %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
-    print('Testing Error: %.03f' %  (1.0 - sum(class_correct)/sum(class_total)))
+        print('Accuracy of %5s: %.1f %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
+    print('Testing Accuracy: %.1f' %  (100 * sum(class_correct)/sum(class_total) ))
 
 
 def adjust_learning_rate(optimizer, epoch):
