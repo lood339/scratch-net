@@ -49,7 +49,7 @@ print(device)
 
 import torch.optim as optim
 criterion = nn.CrossEntropyLoss().cuda(device)
-optimizer = optim.SGD(net.parameters(), lr = 0.1, momentum = 0.9, weight_decay=0.0005)
+optimizer = optim.SGD(net.parameters(), lr = 0.1, momentum = 0.9, weight_decay=0.0001)
 cudnn.benchmark = True
 
 
@@ -94,7 +94,7 @@ def testing_accuracy(net, device, batch_size):
 
 def adjust_learning_rate(optimizer, epoch):
     """For resnet, the lr starts from 0.1, and is divided by 10 at 80 and 120 epochs"""
-    if epoch < 80:
+    if epoch < 100:
         lr = 0.1
     elif epoch < 120:
         lr = 0.1 * 0.1
