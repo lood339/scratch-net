@@ -54,7 +54,7 @@ device = 'cpu'
 net = resnet20()
 if torch.cuda.is_available():
     device = torch.device('cuda:0')
-    net = nn.DataParallel(net).cuda()
+    net = net.to(device)
 
 print(device)
 
@@ -132,7 +132,7 @@ def save_checkpoint(state, filename):
     torch.save(state, filepath)
 
 
-for epoch in range(args.start_epoch, 160):
+for epoch in range(args.start_epoch, 300):
     running_loss = 0.0
     adjust_learning_rate(optimizer, epoch)
     for i, data in enumerate(trainloader, 0):
