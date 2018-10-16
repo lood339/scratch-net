@@ -55,8 +55,10 @@ device = 'cpu'
 net = None
 if args.model_layer == 20:
     net = resnet20(False, num_classes=10)
+    print('ResNet 20')
 elif args.model_layer == 32:
     net = resnet32(False, num_classes=10)
+    print('ResNet 32')
 else:
     print("Error, Network type is not defined")
 
