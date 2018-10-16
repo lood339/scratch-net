@@ -62,7 +62,7 @@ if args.resume:
     if os.path.isfile(args.resume):
         print('load checkpoint "{}"'.format(args.resume))
         checkpoint = torch.load(args.resume)
-        net = checkpoint['state_dict']
+        net.load_state_dict(checkpoint['state_dict'])
         epoch = checkpoint['epoch']
         #optimizer = checkpoint['optimizer']
 
