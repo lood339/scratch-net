@@ -98,6 +98,7 @@ def training_accuracy(net, device, batch_size):
 def testing_accuracy(net, device, batch_size):
     class_correct = list(0.0 for i in range(10))
     class_total = list(0.0 for i in range(10))
+    net.eval()
     with torch.no_grad():
         for data in testloader:
             images, labels = data
@@ -135,6 +136,7 @@ def save_checkpoint(state, filename):
 for epoch in range(args.start_epoch, 300):
     running_loss = 0.0
     adjust_learning_rate(optimizer, epoch)
+    net.train()
     for i, data in enumerate(trainloader, 0):
         inputs, labels = data
         inputs, labels = inputs.to(device), labels.to(device)
