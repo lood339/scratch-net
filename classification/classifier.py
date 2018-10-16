@@ -11,6 +11,7 @@ from resnet import *
 parser = argparse.ArgumentParser()
 parser.add_argument('--start-epoch', default=0, type=int, metavar='N', help='start epoch number')
 parser.add_argument('--resume', default='', metavar='PATH', help='path to the saved checkpoint')
+parser.add_argument('--model-layer', default=20, type=int, metavar='N', help='ResNet layer number, 20, 32, 44, 56')
 
 
 args = parser.parse_args()
@@ -51,7 +52,14 @@ import torch.nn as nn
 
 device = 'cpu'
 
-net = resnet20(False, num_classes=10)
+net = None
+if args.model_layer == 20:
+    net = resnet20(False, num_classes=10)
+elif args.model_layer == 32:
+    net = resnet32(False, num_classes=10)
+else:
+    print("Error, Network type is not defined")
+
 if torch.cuda.is_available():
     device = torch.device('cuda:0')
     net = net.to(device)
