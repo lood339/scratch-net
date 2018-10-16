@@ -37,6 +37,45 @@ class BasicBlock(nn.Module):
 
         return out
 
+class Bottleneck(nn.Module):
+    expansion = 4
+
+    def __init__(self, inplanes, planes, stride=1, downsample=None):
+        super(Bottleneck, self).__init__()
+        self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=1, bias=False)
+        self.bn1 = nn.BatchNorm2d(planes)
+        self.conv2 = conv3x3(planes, planes, stride=stride)
+        self.bn2 = nn.BatchNorm2d(planes)
+        self.conv3 = nn.Conv2d(planes, planes*self.expansion, kernel_size=1, bias=False)
+        self.bn3 = nn.BatchNorm2d(planes*self.expansion)
+        self.relu = nn.ReLU(inplace=True)
+        self.downsample = downsample
+        self.stride = stride
+
+    def forward(self, x):
+        residual = x
+
+        out = self.conv1(x)
+        out = self.bn1(out)
+        out = self.relu(out)
+
+        out = self.conv2(x)
+        out = self.bn2(out)
+        out = self.relu(out)
+
+        out = self.conv3(x)
+        out = self.bn3(out)
+
+        if self.downsample is not None:
+            residual = self.downsample(x)
+
+        out += residual
+        out = self.relu(out)
+
+        return out
+
+
+
 class ResNet(nn.Module):
 
     def __init__(self, block, layers, num_classes=1000):
@@ -88,11 +127,15 @@ class ResNet(nn.Module):
         x = self.layer3(x)
         x = self.avgpool(x)
 
-
-
         x = x.view(x.size(0), -1)
         x = self.fc(x)
         return x
+
+
+
+
+
+
 
 def resnet20(pretrained=False, **kwargs):
     model = ResNet(BasicBlock, [3, 3, 3], **kwargs)
@@ -101,6 +144,7 @@ def resnet20(pretrained=False, **kwargs):
 def resnet32(pretrained=False, **kwargs):
     model = ResNet(BasicBlock, [5, 5, 5], **kwargs)
     return model
+
 
 def ut_resnet20():
     resnet20 = ResNet(BasicBlock, [3, 3, 3], 10)
@@ -127,14 +171,23 @@ def ut_save_model():
     #resnet20 = ResNet(BasicBlock, [3, 3, 3], 10)
 
     #torch.save(resnet20.state_dict(), 'init.pth.tar')
+    """
+    if torch.cuda.is_available():
+        device = torch.device('cuda:0')
+        net = net.to(device)
+    """
 
+    device = torch.device('cpu')
     model = ResNet(BasicBlock, [3, 3, 3], 10)
-    model.load_state_dict(torch.load('init.pth.tar'))
+    checkpoint = torch.load('0150_checkpoint.pth', map_location=device)
+    model.load_state_dict(checkpoint['state_dict'])
+
+    test = 1
 
 if __name__ == '__main__':
-    ut_resnet20()
+    #ut_resnet20()
 
     #ut_resnet32()
 
-    #ut_save_model()
+    ut_save_model()
 
