@@ -51,7 +51,7 @@ import torch.nn as nn
 
 device = 'cpu'
 
-net = resnet20(False, 10)
+net = resnet20(False, num_classes=10)
 if torch.cuda.is_available():
     device = torch.device('cuda:0')
     net = net.to(device)
