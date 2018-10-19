@@ -1,7 +1,7 @@
 import torch.nn as nn
 import torch
 
-__all__ = ['ResNet', 'resnet20', 'resnet32']
+__all__ = ['ResNet', 'ResNet20', 'ResNet32']
 
 def conv3x3(in_planes, out_planes, stride=1):
     return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride, padding=1, bias=False)
@@ -36,6 +36,26 @@ class BasicBlock(nn.Module):
         out = self.relu(out)
 
         return out
+
+    def extract_feature(self, x, features=[]):
+        residual = x
+
+        out = self.conv1(x)
+        out = self.bn1(out)
+        features.append(out)
+        out = self.relu(out)
+
+        out = self.conv2(out)
+        out = self.bn2(out)
+        features.append(out)
+
+        if self.downsample is not None:
+            residual = self.downsample(x)
+        out += residual
+        out = self.relu(out)
+
+        return out
+
 
 class Bottleneck(nn.Module):
     expansion = 4
@@ -131,17 +151,35 @@ class ResNet(nn.Module):
         x = self.fc(x)
         return x
 
+    def extract_feature(self, x, features = []):
+        x = self.conv1(x)
+        x = self.bn1(x)
+        features.append(x)
+        x = self.relu(x)
 
+        blocks = list(self.layer1)
+        for b in blocks:
+            x = b.extract_feature(x, features)
 
+        blocks = list(self.layer2)
+        for b in blocks:
+            x = b.extract_feature(x, features)
 
+        blocks = list(self.layer3)
+        for b in blocks:
+            x = b.extract_feature(x, features)
+        x = self.avgpool(x)
 
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
+        features.append(x)
+        return x
 
-
-def resnet20(pretrained=False, **kwargs):
+def ResNet20(pretrained=False, **kwargs):
     model = ResNet(BasicBlock, [3, 3, 3], **kwargs)
     return model
 
-def resnet32(pretrained=False, **kwargs):
+def ResNet32(pretrained=False, **kwargs):
     model = ResNet(BasicBlock, [5, 5, 5], **kwargs)
     return model
 
@@ -149,9 +187,9 @@ def resnet32(pretrained=False, **kwargs):
 def ut_resnet20():
     resnet20 = ResNet(BasicBlock, [3, 3, 3], 10)
 
-    #input = torch.randn(1, 3, 32, 32)
-    #output = resnet20.forward(input)
-    #print(output.shape)
+    input = torch.randn(1, 3, 32, 32)
+    output = resnet20.forward(input)
+    print(output.shape)
 
     # Estimate Size
     from pytorch_modelsize import SizeEstimator
@@ -179,15 +217,30 @@ def ut_save_model():
 
     device = torch.device('cpu')
     model = ResNet(BasicBlock, [3, 3, 3], 10)
-    checkpoint = torch.load('0150_checkpoint.pth', map_location=device)
+    checkpoint = torch.load('resnet_0250_epoch.pth', map_location=device)
     model.load_state_dict(checkpoint['state_dict'])
+
+
+    input = torch.randn(1, 3, 32, 32)
+    features = []
+    model.extract_feature(input, features)
+    for feat in features:
+        print(feat.shape)
+
+    modules = list(model.children())[:-1]
+    model = nn.Sequential(*modules)
+
+    #print(model)
 
     test = 1
 
+
+
+
 if __name__ == '__main__':
-    #ut_resnet20()
+    ut_resnet20()
 
     #ut_resnet32()
 
-    ut_save_model()
+    #ut_save_model()
 
