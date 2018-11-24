@@ -159,16 +159,16 @@ def ut_avg_pool_feature():
     from util import vis_images
 
     model = vgg16(True)
-    #input = torch.randn(2, 3, 224, 224)
+
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225])
-    im = cv.imread('/Users/jimmy/Desktop/roof_6_pool.jpg', 1) # sub_image
+    im = cv.imread('cat.jpg', 1)
     im = cv.cvtColor(im, cv.COLOR_BGR2RGB)
     im = Image.fromarray(im)
 
     transform = transforms.Compose(
         [
-            transforms.Resize(224),
+            transforms.Resize((224, 224)),
             transforms.ToTensor(),
             normalize,
         ]
@@ -213,7 +213,6 @@ def ut_pre_trained_vgg():
     output = model.forward(input)
     print(time.time() - t)
     print(output.shape)
-
 
 if __name__ == '__main__':
     ut_avg_pool_feature()

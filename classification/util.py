@@ -91,8 +91,6 @@ def vis_cadindate_location(im, points):
     for r in range(points.shape[0]):
         x, y = points[r,:]
         cv.circle(vis, (int(x), int(y)), 5, (255, 0, 0), 2)
-    #cv.imshow('candidate locations', vis)
-    #cv.waitKey()
     fig = plt.figure()
     plt.imshow(vis[:,:,[2,1,0]])
     plt.axis('equal')
