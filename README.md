@@ -1,5 +1,5 @@
-# object-detection
-Toy examples for object classification/detection.
+# scratch-net
+Toy examples for object classification and classification
 
 
 Dependencies:
