@@ -6,7 +6,7 @@ import torch.nn.functional as F
 
 class VAE(nn.Module):
     def __init__(self):
-        super(VAE, self).__init()
+        super(VAE, self).__init__()
 
         self.fc1 = nn.Linear(28*28, 400)
         self.fc21 = nn.Linear(400, 20)  # mu
@@ -22,8 +22,15 @@ class VAE(nn.Module):
         return self.fc21(h1), self.fc22(h1)
 
     def reparameterize(self, mu, logvar):
+        """
+        What is this?
+        :param mu:
+        :param logvar:
+        :return:
+        """
         std = torch.exp(0.5*logvar)
-        eps = torch.randn_like(std)
+        eps = torch.randn_like(std)  #(0, 1) Gaussian distribution
+
         return mu + eps*std
 
     def decode(self, z):
@@ -31,7 +38,7 @@ class VAE(nn.Module):
         return torch.sigmoid(self.fc4(h3))
 
     def forward(self, x):
-        mu, logvar = self.encoder(x.view(-1, 28*28))
-        z = self.reparameterize(mu, logvar)
-        return self.decode(z), mu, logvar
+        mu, logvar = self.encoder(x.view(-1, 28*28))  # --> 20
+        z = self.reparameterize(mu, logvar)  # --> 20
+        return self.decode(z), mu, logvar    # --> 28*28
 

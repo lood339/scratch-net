@@ -3,6 +3,7 @@ sys.path.append('../')
 
 import torch
 from torch import optim
+import torch.nn.functional as F
 from torchvision import datasets, transforms
 
 from classification.vae import VAE
@@ -18,14 +19,14 @@ test_loader = torch.utils.data.DataLoader(
     batch_size=batch_size, shuffle=True)
 
 seed = 0
+epochs = 20
 torch.manual_seed(seed)
 
-
-device = torch.device("cuda" if args.cuda else "cpu")
+device = torch.device("cpu")
 
 
 model = VAE().to(device)
-optimizer = optim.Adam(model.parameters(), lr=le-3)
+optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
 def loss_function(recon_x, x, mu, logvar):
     BCE = F.binary_cross_entropy(recon_x,
@@ -40,6 +41,24 @@ def loss_function(recon_x, x, mu, logvar):
     return BCE + KLD
 
 model.train()
-train_loss = 0
-for batch_idx, (data, _) in enumerate(train_loader):
+
+for epoch in range(1, epochs+1):
+    train_loss = 0
+    for batch_idx, (data, _) in enumerate(train_loader):
+        data = data.to(device)
+
+        recon_batch, mu, logvar = model(data)
+        loss = loss_function(recon_batch, data, mu, logvar)
+
+        train_loss += loss.item()
+        optimizer.zero_grad()
+        loss.backward()
+
+    print('====> Epoch: {} Average loss: {:.4f}'.format(
+        epoch, train_loss / len(train_loader.dataset)))
+
+
+
+
+
     
